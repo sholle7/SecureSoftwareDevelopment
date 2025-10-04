@@ -6,13 +6,15 @@ public class Car {
     private Double wholesalePrice;
     private String model;
     private String manufacturer;
+    private String imagePath;
 
-    public Car(Integer id, Double price, Double wholesalePrice, String model, String manufacturer) {
+    public Car(Integer id, Double price, Double wholesalePrice, String model, String manufacturer, String imagePath) {
         this.id = id;
         this.price = price;
         this.wholesalePrice = wholesalePrice;
         this.model = model;
         this.manufacturer = manufacturer;
+        this.imagePath = imagePath;
     }
 
     public Integer getId() {
@@ -53,5 +55,13 @@ public class Car {
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+    public String getImagePath(){
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath){
+        this.imagePath = imagePath;
     }
 }

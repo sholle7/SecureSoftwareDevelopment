@@ -12,30 +12,44 @@
 <div layout:fragment="content">
     <h1>Car details</h1>
     <div class="row">
-        <form class="col-5" method="POST" th:action="@{/cars/__${car.id}__}">
-            <div class="form-group">
-                <label for="model">Model</label>
-                <input type="text" id="model" name="model" class="form-control" th:value="${car.model}">
+        <div class="col-6">
+            <form method="POST" th:action="@{/cars/__${car.id}__}">
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <input type="text" id="model" name="model" class="form-control" th:value="${car.model}">
+                </div>
+                <div class="form-group">
+                    <label for="manufacturer">Manufacturer</label>
+                    <input type="text" id="manufacturer" name="manufacturer" class="form-control"
+                           th:value="${car.manufacturer}">
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="text" id="price" name="price" class="form-control" th:value="${car.price}">
+                </div>
+                <div class="form-group">
+                    <label for="wholesalePrice">Wholesale Price</label>
+                    <input type="text" id="wholesalePrice" name="wholesalePrice" class="form-control"
+                           th:value="${car.wholesalePrice}">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-5 d-flex align-items-center ml-5">
+            <img th:if="${car.imagePath}"
+                 th:src="@{/__${car.imagePath}__}"
+                 alt="Car image"
+                 class="img-fluid border"
+                 style="max-height: 300px; object-fit: contain;">
+            <div th:unless="${car.imagePath}" class="text-muted">
+                No image available
             </div>
-            <div class="form-group">
-                <label for="manufacturer">Manufacturer</label>
-                <input type="text" id="manufacturer" name="manufacturer" class="form-control"
-                       th:value="${car.manufacturer}">
-            </div>
-            <div class="form-group">
-                <label for="price">Price</label>
-                <input type="text" id="price" name="price" class="form-control" th:value="${car.price}">
-            </div>
-            <div class="form-group">
-                <label for="wholesalePrice">Wholesale Price</label>
-                <input type="text" id="wholesalePrice" name="wholesalePrice" class="form-control"
-                       th:value="${car.wholesalePrice}">
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
+        </div>
     </div>
+
     <div sec:authorize="hasAuthority('CAN_BUY_CAR')" class="mt-2 mb-2">
         <a th:href="@{'/buy-car/' + ${car.id}}">Buy Car</a>
     </div>

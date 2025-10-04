@@ -38,12 +38,19 @@
             </form>
         </div>
 
-        <div class="col-5 d-flex align-items-center ml-5">
+        <div class="col-5 d-flex flex-column align-items-start ml-5">
             <img th:if="${car.imagePath}"
-                 th:src="@{/__${car.imagePath}__}"
+                 th:src="@{/images/__${car.imagePath}__}"
                  alt="Car image"
-                 class="img-fluid border"
+                 class="img-fluid border mb-2"
                  style="max-height: 300px; object-fit: contain;">
+
+            <a th:if="${car.imagePath}"
+               th:href="@{/download(filename=${car.imagePath})}"
+               class="btn btn-secondary btn-sm mt-2">
+                Download Image
+            </a>
+
             <div th:unless="${car.imagePath}" class="text-muted">
                 No image available
             </div>

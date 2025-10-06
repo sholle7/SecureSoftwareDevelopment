@@ -23,7 +23,8 @@ public class DatabaseAuthenticationProvider implements AuthenticationProvider {
     private final UserRepository userRepository;
     private final PermissionService permissionService;
 
-    private static final String PASSWORD_WRONG_MESSAGE = "Authentication failed for username='%s',password='%s'";
+    private static final String USERNAME_WRONG_MESSAGE = "Authentication failed: username '%s' does not exist.";
+    private static final String PASSWORD_WRONG_MESSAGE = "Authentication failed: incorrect password for username '%s'.";
 
     public DatabaseAuthenticationProvider(UserRepository userRepository, PermissionService permissionService) {
         this.userRepository = userRepository;
@@ -38,14 +39,20 @@ public class DatabaseAuthenticationProvider implements AuthenticationProvider {
         Object details = authentication.getDetails();
         Integer totp = StringUtils.isEmpty(details) ? null : Integer.valueOf(details.toString());
 
+        final User user = userRepository.findUser(username);
+
+        if (user == null) {
+            throw new BadCredentialsException(String.format(USERNAME_WRONG_MESSAGE, username));
+        }
+
         boolean success = validCredentials(username, password);
         if (success) {
-            User user = userRepository.findUser(username);
             List<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(user);
+
             return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
         }
 
-        throw new BadCredentialsException(String.format(PASSWORD_WRONG_MESSAGE, username, password));
+        throw new BadCredentialsException(String.format(PASSWORD_WRONG_MESSAGE, password));
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(User user) {

@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/perform-login")
                 .defaultSuccessUrl("/cars")
-                .failureUrl("/login?error")
+                .failureHandler(customAuthFailureHandler())
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login")
@@ -55,4 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new PlainTextPasswordEncoder();
     }
 
+    @Bean
+    public CustomAuthenticationFailureHandler customAuthFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
 }

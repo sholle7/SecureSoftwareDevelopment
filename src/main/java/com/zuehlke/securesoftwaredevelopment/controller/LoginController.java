@@ -3,6 +3,7 @@ package com.zuehlke.securesoftwaredevelopment.controller;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+import com.zuehlke.securesoftwaredevelopment.config.CustomAuthenticationFailureHandler;
 import com.zuehlke.securesoftwaredevelopment.domain.HashedUser;
 import com.zuehlke.securesoftwaredevelopment.repository.HashedUserRepository;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
@@ -23,7 +26,14 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String login(Model model, HttpSession session) {
+        Object error = session.getAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
+
+        if (error != null) {
+            model.addAttribute("authError", error);
+
+            session.removeAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
+        }
         return "login";
     }
 

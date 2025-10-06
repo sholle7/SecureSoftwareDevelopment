@@ -14,6 +14,9 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
+
+<div th:if="${authError}" class="alert alert-danger mt-2" th:text="${authError}"></div>
+
 <div class="d-flex flex-column justify-content-around align-items-center vh-100">
     <form class="d-flex flex-column justify-content-around" style="height: 200px" method="POST" action="/perform-login">
         <input type="text" class="form-control" name="username" placeholder="Username" required>

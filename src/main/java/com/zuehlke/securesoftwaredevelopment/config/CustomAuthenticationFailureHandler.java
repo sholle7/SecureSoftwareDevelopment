@@ -21,6 +21,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
         request.getSession().setAttribute(SESSION_ATTR_NAME, exception.getMessage());
 
-        response.sendRedirect(request.getContextPath() + "/login");
+        response.sendRedirect(request.getContextPath() + "/login?error=" + exception.getMessage());
     }
 }

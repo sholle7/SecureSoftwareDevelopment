@@ -26,13 +26,9 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login(Model model, HttpSession session) {
-        Object error = session.getAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
-
+    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {
             model.addAttribute("authError", error);
-
-            session.removeAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
         }
         return "login";
     }

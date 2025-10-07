@@ -71,23 +71,43 @@
 
     <div class="form-group" th:each="comment, iter : ${comments}">
         <b th:text="${comment.personName}"></b>
-        <div class="form-control mb-1" th:id="'commentDisplay-' + ${iter.index}" th:text="${comment.comment}"></div>
-        <textarea class="form-control mb-1" th:id="'commentEdit-' + ${iter.index}" style="display:none;"></textarea>
 
-        <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
-                th:if="${comment.userId == currentUserId}"
-                th:data-comment-id="${comment.commentId}"
-                th:data-index="${iter.index}">
-            Edit
-        </button>
-        <button type="button" class="btn btn-sm btn-success save-btn"
-                th:if="${comment.userId == currentUserId}"
-                th:data-comment-id="${comment.commentId}"
-                th:data-index="${iter.index}"
-                style="display:none;">
-            Save
-        </button>
+        <div class="d-flex align-items-center mb-2">
+            <div class="form-control flex-grow-1 mr-2"
+                 th:id="'commentDisplay-' + ${iter.index}"
+                 th:text="${comment.comment}">
+            </div>
+
+            <textarea class="form-control flex-grow-1 mr-2"
+                      th:id="'commentEdit-' + ${iter.index}"
+                      style="display:none;"></textarea>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-primary edit-btn mr-1"
+                    th:if="${comment.userId == currentUserId}"
+                    th:data-comment-id="${comment.commentId}"
+                    th:data-index="${iter.index}">
+                Edit
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-success save-btn mr-1"
+                    th:if="${comment.userId == currentUserId}"
+                    th:data-comment-id="${comment.commentId}"
+                    th:data-index="${iter.index}"
+                    style="display:none;">
+                Save
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-secondary cancel-btn"
+                    th:data-index="${iter.index}"
+                    style="display:none;">
+                Cancel
+            </button>
+        </div>
     </div>
+
 
     <div class="form-group">
         <label for="addComment">Add comment</label>
@@ -102,7 +122,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Create comment
             document.getElementById('createComment')?.addEventListener('click', function () {
                 const text = document.getElementById('addComment').value.trim();
                 if (!text) return;
@@ -113,31 +132,51 @@
                 }).then(() => window.location.reload());
             });
 
-            // Edit button click
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const index = this.dataset.index;
                     const display = document.getElementById(`commentDisplay-${index}`);
                     const textarea = document.getElementById(`commentEdit-${index}`);
                     const saveBtn = document.querySelector(`.save-btn[data-index="${index}"]`);
+                    const cancelBtn = document.querySelector(`.cancel-btn[data-index="${index}"]`);
 
                     textarea.value = display.innerText;
                     display.style.display = 'none';
                     textarea.style.display = 'block';
                     this.style.display = 'none';
                     saveBtn.style.display = 'inline-block';
+                    cancelBtn.style.display = 'inline-block';
                 });
             });
 
-            // Save button click
+            document.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = this.dataset.index;
+                    const display = document.getElementById(`commentDisplay-${index}`);
+                    const textarea = document.getElementById(`commentEdit-${index}`);
+                    const editBtn = document.querySelector(`.edit-btn[data-index="${index}"]`);
+                    const saveBtn = document.querySelector(`.save-btn[data-index="${index}"]`);
+
+                    textarea.style.display = 'none';
+                    display.style.display = 'block';
+                    editBtn.style.display = 'inline-block';
+                    saveBtn.style.display = 'none';
+                    this.style.display = 'none';
+                });
+            });
+
             document.querySelectorAll('.save-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const index = this.dataset.index;
                     const commentId = this.dataset.commentId;
                     const textarea = document.getElementById(`commentEdit-${index}`);
                     const newText = textarea.value.trim();
+                    const cancelBtn = document.querySelector(`.cancel-btn[data-index="${index}"]`);
+
 
                     if (!newText) return;
+
+                    cancelBtn.style.display = 'none';
 
                     fetch('/comments/edit', {
                         method: 'POST',

@@ -51,10 +51,8 @@
                  class="img-fluid border mb-2"
                  style="max-height: 300px; object-fit: contain;">
 
-            <a th:if="${car.imagePath}"
-               th:href="@{/download(filename=${car.imagePath})}"
-               class="btn btn-secondary btn-sm mt-2">
-                Download Image
+            <a th:href="@{/download(filename=${car.imagePath}, model=${car.model}, manufacturer=${car.manufacturer}, price=${car.price}, wholesalePrice=${car.wholesalePrice})}" class="btn btn-secondary btn-sm mt-2">
+                Download
             </a>
 
             <div th:unless="${car.imagePath}" class="text-muted">

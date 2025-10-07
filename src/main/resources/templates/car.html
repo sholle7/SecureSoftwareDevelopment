@@ -140,7 +140,7 @@
                     const saveBtn = document.querySelector(`.save-btn[data-index="${index}"]`);
                     const cancelBtn = document.querySelector(`.cancel-btn[data-index="${index}"]`);
 
-                    textarea.value = display.innerText;
+                    textarea.value = display.innerHTML;
                     display.style.display = 'none';
                     textarea.style.display = 'block';
                     this.style.display = 'none';
@@ -189,7 +189,7 @@
                     }).then(response => {
                         if (response.ok) {
                             const display = document.getElementById(`commentDisplay-${index}`);
-                            display.innerText = newText;
+                            display.innerHtml = newText;
                             display.style.display = 'block';
                             textarea.style.display = 'none';
                             document.querySelector(`.edit-btn[data-index="${index}"]`).style.display = 'inline-block';

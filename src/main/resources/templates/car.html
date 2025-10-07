@@ -75,7 +75,7 @@
         <div class="d-flex align-items-center mb-2">
             <div class="form-control flex-grow-1 mr-2"
                  th:id="'commentDisplay-' + ${iter.index}"
-                 th:text="${comment.comment}">
+                 th:utext="${comment.comment}">
             </div>
 
             <textarea class="form-control flex-grow-1 mr-2"

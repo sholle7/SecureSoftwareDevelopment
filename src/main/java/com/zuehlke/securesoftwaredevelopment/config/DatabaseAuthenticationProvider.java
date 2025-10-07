@@ -52,7 +52,7 @@ public class DatabaseAuthenticationProvider implements AuthenticationProvider {
             return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
         }
 
-        throw new BadCredentialsException(String.format(PASSWORD_WRONG_MESSAGE, password));
+        throw new BadCredentialsException(String.format(PASSWORD_WRONG_MESSAGE, username));
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(User user) {

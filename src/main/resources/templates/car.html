@@ -189,7 +189,7 @@
                     }).then(response => {
                         if (response.ok) {
                             const display = document.getElementById(`commentDisplay-${index}`);
-                            display.innerHtml = newText;
+                            display.innerHTML = newText;
                             display.style.display = 'block';
                             textarea.style.display = 'none';
                             document.querySelector(`.edit-btn[data-index="${index}"]`).style.display = 'inline-block';

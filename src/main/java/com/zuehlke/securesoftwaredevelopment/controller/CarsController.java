@@ -7,6 +7,8 @@ import com.zuehlke.securesoftwaredevelopment.repository.CommentRepository;
 import com.zuehlke.securesoftwaredevelopment.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -57,10 +59,20 @@ public class CarsController {
 
         for (Comment comment : comments) {
             Person person = userRepository.get(comment.getUserId());
-            commentList.add(new ViewComment(person.getFirstName() + " " + person.getLastName(), comment.getComment()));
+            commentList.add(new ViewComment(
+                    person.getFirstName() + " " + person.getLastName(),
+                    comment.getComment(),
+                    comment.getUserId(),
+                    comment.getId()
+            ));
         }
 
         model.addAttribute("comments", commentList);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Person currentUser = userRepository.findByUsername(username);
+        model.addAttribute("currentUserId", currentUser.getId());
 
         return "car";
     }

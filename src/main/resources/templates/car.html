@@ -9,6 +9,12 @@
     <title>Car Details</title>
 </head>
 <body>
+
+<span sec:authorize="isAuthenticated()"
+      th:text="${#authentication.principal.username}"
+      id="currentUser"
+      hidden></span>
+
 <div layout:fragment="content">
     <h1>Car details</h1>
     <div class="row">
@@ -60,11 +66,29 @@
     <div sec:authorize="hasAuthority('CAN_BUY_CAR')" class="mt-2 mb-2">
         <a th:href="@{'/buy-car/' + ${car.id}}">Buy Car</a>
     </div>
+
     <h2 id="car-comments">Car comments</h2>
-    <div class="form-group" th:each="comment,iter : ${comments}">
+
+    <div class="form-group" th:each="comment, iter : ${comments}">
         <b th:text="${comment.personName}"></b>
-        <div class="form-control" th:id="${iter.index}" th:utext="${comment.comment}" disabled></div>
+        <div class="form-control mb-1" th:id="'commentDisplay-' + ${iter.index}" th:text="${comment.comment}"></div>
+        <textarea class="form-control mb-1" th:id="'commentEdit-' + ${iter.index}" style="display:none;"></textarea>
+
+        <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
+                th:if="${comment.userId == currentUserId}"
+                th:data-comment-id="${comment.commentId}"
+                th:data-index="${iter.index}">
+            Edit
+        </button>
+        <button type="button" class="btn btn-sm btn-success save-btn"
+                th:if="${comment.userId == currentUserId}"
+                th:data-comment-id="${comment.commentId}"
+                th:data-index="${iter.index}"
+                style="display:none;">
+            Save
+        </button>
     </div>
+
     <div class="form-group">
         <label for="addComment">Add comment</label>
         <textarea class="form-control" id="addComment" rows="3" placeholder="Comment..."></textarea>
@@ -73,24 +97,68 @@
 
     <script th:inline="javascript">
         const carId = [[${car.id}]];
+        const currentUserId = [[${currentUserId}]];
     </script>
 
     <script>
-        window.addEventListener('load', function () {
-            document.getElementById("createComment").addEventListener("click", function () {
-                const comment = document.getElementById("addComment").value;
-
+        document.addEventListener('DOMContentLoaded', function () {
+            // Create comment
+            document.getElementById('createComment')?.addEventListener('click', function () {
+                const text = document.getElementById('addComment').value.trim();
+                if (!text) return;
                 fetch('/comments', {
                     method: 'POST',
-                    body: JSON.stringify({
-                        carId: carId,
-                        comment: comment
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(function () {
-                    window.location.reload();
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ carId: carId, comment: text })
+                }).then(() => window.location.reload());
+            });
+
+            // Edit button click
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = this.dataset.index;
+                    const display = document.getElementById(`commentDisplay-${index}`);
+                    const textarea = document.getElementById(`commentEdit-${index}`);
+                    const saveBtn = document.querySelector(`.save-btn[data-index="${index}"]`);
+
+                    textarea.value = display.innerText;
+                    display.style.display = 'none';
+                    textarea.style.display = 'block';
+                    this.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
+                });
+            });
+
+            // Save button click
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = this.dataset.index;
+                    const commentId = this.dataset.commentId;
+                    const textarea = document.getElementById(`commentEdit-${index}`);
+                    const newText = textarea.value.trim();
+
+                    if (!newText) return;
+
+                    fetch('/comments/edit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: commentId,
+                            comment: newText,
+                            userId: currentUserId
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            const display = document.getElementById(`commentDisplay-${index}`);
+                            display.innerText = newText;
+                            display.style.display = 'block';
+                            textarea.style.display = 'none';
+                            document.querySelector(`.edit-btn[data-index="${index}"]`).style.display = 'inline-block';
+                            this.style.display = 'none';
+                        } else {
+                            alert('Failed to update comment');
+                        }
+                    });
                 });
             });
         });

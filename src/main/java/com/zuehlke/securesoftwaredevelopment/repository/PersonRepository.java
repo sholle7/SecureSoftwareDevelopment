@@ -108,4 +108,20 @@ public class PersonRepository {
             e.printStackTrace();
         }
     }
+
+    public Person findByUsername(String username) {
+        String query = "SELECT p.id, p.firstName, p.lastName, p.personalNumber, p.address FROM persons p " +
+                "INNER JOIN users u ON p.id = u.id WHERE u.username = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return createPersonFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

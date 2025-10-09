@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -26,10 +27,18 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("authError", error);
+    public String login(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            Object authError = session.getAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
+            if (authError != null) {
+                model.addAttribute("authError", authError.toString());
+
+                session.removeAttribute(CustomAuthenticationFailureHandler.SESSION_ATTR_NAME);
+            }
         }
+
         return "login";
     }
 

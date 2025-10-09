@@ -14,6 +14,19 @@ public class HomeController {
 
     @GetMapping("/redirect")
     public String redirectTo(@RequestParam("url") String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return "redirect:/";
+        }
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return "redirect:/";
+        }
+
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
+
         return "redirect:" + url;
     }
+
 }

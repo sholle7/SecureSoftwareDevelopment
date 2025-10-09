@@ -39,9 +39,9 @@ public class CommentController {
     public ResponseEntity<Void> editComment(@RequestBody Comment updatedComment, Authentication authentication) {
         Comment existing = commentRepository.findById(updatedComment.getId());
 
-//        if (existing == null || !existing.getUserId().equals(getCurrentUserId(authentication))) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
+        if (existing == null || !existing.getUserId().equals(getCurrentUserId(authentication))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         commentRepository.update(updatedComment);
 

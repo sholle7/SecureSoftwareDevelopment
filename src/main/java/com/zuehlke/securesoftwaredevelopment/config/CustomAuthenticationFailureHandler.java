@@ -19,8 +19,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         logger.warn("Authentication failure: {}", exception.getMessage());
 
-        request.getSession().setAttribute(SESSION_ATTR_NAME, exception.getMessage());
+        request.getSession().setAttribute(SESSION_ATTR_NAME, "Invalid username or password.");
 
-        response.sendRedirect(request.getContextPath() + "/login?error=" + exception.getMessage());
+        response.sendRedirect(request.getContextPath() + "/login");
     }
 }
